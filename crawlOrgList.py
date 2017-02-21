@@ -19,7 +19,7 @@ for ul in uls:
         state_list.append((tmp.text, tmp['href']))
         
 # walking through each state
-for state in state_list:
+for state in state_list[6:]:
     state_name = state[0]
     state_url = state[1]
     print 'Start walking through: %s' % state_name 
@@ -38,15 +38,17 @@ for state in state_list:
             org = org.a
             org_name = re.sub('\n','',org.text).strip()
             org_url = org['href']
-            org_list.append((state_name, state_url, org_name, org_url))
+            org_list.append((org_name, org_url))
         print '%s: Page %s of 50 is done!' % (state_name, i) 
 
     # write down data by state
-    file_name = state_name + '.tsv'
+    file_name = 'orgList/' + state_name + '.tsv'
     print 'Start writing %s' % state_name
+
     with open(file_name, "wb") as writer:
-        writer.write('state_name\tstate_url\torg_name\torg_url\n')
-        for state_name, state_url, org_name, org_url in org_list:
-            writer.write('{0}\t{1}\t{2}\t{3}\n'.format(state_name, state_url, org_name, org_url))
+        writer.write('org_name\torg_url\n')
+        for org_name, org_url in org_list:
+            writer.write('{0}\t{1}\n'.format(org_name.encode('ascii', 'ignore'), org_url))
+
     print '%s is done!' % state_name
 
