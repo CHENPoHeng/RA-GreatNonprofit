@@ -32,8 +32,8 @@ for state in state_list[6:]:
         soup = bs(page)
 
         # get organization list
-        ol = soup.find('ol', {'class', 'gnp-searchResults'})
-        ol = ol.find_all('div', {'class', 'gnp-searchResult-infoMajor'})
+        ol = soup.find('ol', {'class': 'gnp-searchResults'})
+        ol = ol.find_all('div', {'class': 'gnp-searchResult-infoMajor'})
         for org in ol:
             org = org.a
             org_name = re.sub('\n','',org.text).strip()
