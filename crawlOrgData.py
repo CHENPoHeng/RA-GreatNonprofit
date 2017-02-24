@@ -73,8 +73,9 @@ for file_dir in files:
                 continue
             # parse content
             item_content= item.text.replace('\r','').replace('\n',' ')
-            pattern = item.strong.text + '\:\s(.*)'
-            item_content = re.findall(pattern,item_content)[0]
+            pattern = item.strong.text + '(.*)'
+            # pattern = item.strong.text + '\:\s(.*)'
+            item_content = re.findall(pattern,item_content)[0].strip()
             org_data[org_name][item.strong.text] = item_content
 
     ## after data are saved, 
