@@ -3,6 +3,7 @@ import urllib
 import re
 from bs4 import BeautifulSoup as bs
 
+
 # default setting 
 url_base = 'http://greatnonprofits.org'
 
@@ -11,7 +12,7 @@ dir_base = 'orgList/'
 files = os.listdir(dir_base)
 
 # iterate through each file
-for file_dir in files[:1]:
+for file_dir in files[-3:]:
     # read each file and go through data 
     with open(dir_base + file_dir, 'rb') as tsv:
         file = tsv.read()
@@ -56,6 +57,8 @@ for file_dir in files[:1]:
                 # iterate all review and parse 
                 for review in reviews:
                     # parse review data
+                    if review.find('a', {'class': 'review-yes'}) is None:
+                        continue
                     tmp = review.find('a', {'class': 'review-yes'})
                     review_id = tmp['review_id']
                     review_likes = tmp.text
