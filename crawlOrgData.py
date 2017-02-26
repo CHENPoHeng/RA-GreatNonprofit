@@ -10,7 +10,7 @@ url_base = 'http://greatnonprofits.org'
 dir_base = 'orgList/'
 files = os.listdir(dir_base)
 
-for file_dir in files:
+for file_dir in files[12:]:
     # read each file and go through data 
     with open(dir_base + file_dir, 'rb') as tsv:
         file = tsv.read()
@@ -36,6 +36,8 @@ for file_dir in files:
         soup = bs(page)
         ## get organization info
         np_info = soup.find('ul', {'id' : 'np-info-details'})
+        if np_info is None:
+            continue
         # get tax number
         np_tax = np_info.li.find_all('span')
         for i in np_tax:
@@ -66,17 +68,25 @@ for file_dir in files:
         for item in np_overview:
             # create a list to store all kinds of overview items
             # for later data frame building
-            if item.strong is not None:
+            if item.strong is not None and len(item.strong.text) < 50:
                 if item.strong.text not in overview_items:
-                    overview_items.append(item.strong.text)
+                    overview_items.append(item.strong.text.encode('ascii','ignore'))
             else:
                 continue
             # parse content
             item_content= item.text.replace('\r','').replace('\n',' ')
             pattern = item.strong.text + '(.*)'
             # pattern = item.strong.text + '\:\s(.*)'
-            item_content = re.findall(pattern,item_content)[0].strip()
-            org_data[org_name][item.strong.text] = item_content
+            if re.match(pattern,item_content):
+                item_content = re.findall(pattern,item_content)[0].strip()
+            else:
+                continue
+            if item_content == '':
+                continue    
+            if item_content[0] == ':':
+                item_content = item_content[1:].strip()
+            
+            org_data[org_name][item.strong.text.encode('ascii','ignore')] = item_content
 
     ## after data are saved, 
     file_name = 'orgData/' + file_dir
