@@ -35,4 +35,4 @@ for file_dir in files:
     d = pd.DataFrame(d[1: ], columns = d[0])
     org_review = org_review.append(d, ignore_index=True)
 
-org_data.to_csv('orgReview.csv', index = False)
+org_review.to_csv('orgReview.csv', index = False)
