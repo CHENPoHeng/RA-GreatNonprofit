@@ -12,7 +12,7 @@ dir_base = 'orgList/'
 files = os.listdir(dir_base)
 
 # iterate through each file
-for file_dir in files[-3:]:
+for file_dir in files:
     # read each file and go through data 
     with open(dir_base + file_dir, 'rb') as tsv:
         file = tsv.read()
@@ -73,7 +73,7 @@ for file_dir in files[-3:]:
                     reviewer_rating = review.find('span', {'itemprop': 'ratingValue'}).text
                     review_date = review.find('span', {'itemprop': 'datePublished'}).text
                     tmp = review.find('div', {'itemprop': 'reviewBody'})
-                    review_body = tmp.text.replace('\n','')
+                    review_body = tmp.text.replace('\n','').replace('\t',' ')
 
                     # write them line by line
                     to_be_write = '\t'.join([org_name, review_id, review_likes, reviewer_url,

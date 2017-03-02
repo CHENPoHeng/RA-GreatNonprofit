@@ -10,7 +10,7 @@ url_base = 'http://greatnonprofits.org'
 dir_base = 'orgList/'
 files = os.listdir(dir_base)
 
-for file_dir in files[12:]:
+for file_dir in files:
     # read each file and go through data 
     with open(dir_base + file_dir, 'rb') as tsv:
         file = tsv.read()
@@ -44,12 +44,12 @@ for file_dir in files[12:]:
             if i.text.isupper():
                 np_tax = i.text
                 break
-        np_tel = np_info.find('span', {'class': 'telephone'}).text
-        np_street = np_info.find('span', {'itemprop': 'streetAddress'}).text.strip()
-        np_locality = np_info.find('span', {'itemprop': 'addressLocality'}).text.strip()
-        np_region = np_info.find('span', {'itemprop': 'addressRegion'}).text.strip()
-        np_postcode = np_info.find('span', {'itemprop': 'postalCode'}).text.strip()
-        np_country = np_info.find('span', {'itemprop': 'addressCountry'}).text.strip()
+        np_tel = np_info.find('span', {'class': 'telephone'}).text.replace('\t','')
+        np_street = np_info.find('span', {'itemprop': 'streetAddress'}).text.strip().replace('\t','')
+        np_locality = np_info.find('span', {'itemprop': 'addressLocality'}).text.strip().replace('\t','')
+        np_region = np_info.find('span', {'itemprop': 'addressRegion'}).text.strip().replace('\t','')
+        np_postcode = np_info.find('span', {'itemprop': 'postalCode'}).text.strip().replace('\t','')
+        np_country = np_info.find('span', {'itemprop': 'addressCountry'}).text.strip().replace('\t','')
         np_url = np_info.find('a', {'class': 'link-fa-desktop'})['href']
         # store data into dictionary
         org_data[org_name] = {}
@@ -74,7 +74,7 @@ for file_dir in files[12:]:
             else:
                 continue
             # parse content
-            item_content= item.text.replace('\r','').replace('\n',' ')
+            item_content= item.text.replace('\r','').replace('\n','').replace('\t',' ')
             pattern = item.strong.text + '(.*)'
             # pattern = item.strong.text + '\:\s(.*)'
             if re.match(pattern,item_content):
