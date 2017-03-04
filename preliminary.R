@@ -73,8 +73,9 @@ p = do.call(rbind, p)
 ggplot() +
     geom_line(data = p, aes(x = Var1, y = Freq, group = type, col = type)) + 
     scale_x_continuous('fraction of review') + 
-    scale_y_continuous('frequency') +  
-    ggtitle("Organization in given types") +
+    scale_y_continuous('number of orgnization') +  
+    ggtitle("CDF of Organization in given types") +
+    ggtitle("CDF of Organization in given types") +
     theme(plot.title = element_text(hjust = 0.5))
 ggsave(file="plot/organization_type.png")
 
@@ -82,30 +83,30 @@ ggsave(file="plot/organization_type.png")
 ggplot() +
     geom_line(data = p, aes(x = Var1, y = Freq, group = type, col = type)) + 
     scale_x_log10('fraction of review') + 
-    scale_y_log10('frequency') +  
-    ggtitle("Organization in given types (log)") +
+    scale_y_log10('number of orgnization') +  
+    ggtitle("CDF of Organization in given types (log)") +
     theme(plot.title = element_text(hjust = 0.5))
 ggsave(file="plot/organization_type_log.png")
 
 
-# Normalized CDF
-ggplot() +
-    geom_line(data = p, aes(x = Var1, y = Percent, group = type, col = type)) + 
-    scale_x_continuous('fraction of review') + 
-    scale_y_continuous('percentage') +   
-    ggtitle("Organization in given types (normalized)") +
-    theme(plot.title = element_text(hjust = 0.5))
-ggsave(file="plot/organization_type_percent.png")
-
-# Normalized CDF in log
-ggplot() +
-    geom_line(data = p, aes(x = Var1, y = Percent, group = type, col = type)) + 
-    scale_x_log10('fraction of review') + 
-    scale_y_continuous('percentage') +   
-    ggtitle("Organization in given types (normalized, log)") +
-    theme(plot.title = element_text(hjust = 0.5))
-ggsave(file="plot/organization_type_percent_log.png")
-
+# # Normalized CDF
+# ggplot() +
+#     geom_line(data = p, aes(x = Var1, y = Percent, group = type, col = type)) + 
+#     scale_x_continuous('fraction of review') + 
+#     scale_y_continuous('percentage') +   
+#     ggtitle("Organization in given types (normalized)") +
+#     theme(plot.title = element_text(hjust = 0.5))
+# ggsave(file="plot/organization_type_percent.png")
+# 
+# # Normalized CDF in log
+# ggplot() +
+#     geom_line(data = p, aes(x = Var1, y = Percent, group = type, col = type)) + 
+#     scale_x_log10('fraction of review') + 
+#     scale_y_continuous('percentage') +   
+#     ggtitle("Organization in given types (normalized, log)") +
+#     theme(plot.title = element_text(hjust = 0.5))
+# ggsave(file="plot/organization_type_percent_log.png")
+# 
 
 # 3) Per user:
 # - how many reviews do a user write? We can create PDF and CDF plots (x axis: number of reviews,
@@ -124,7 +125,7 @@ ggplot() +
     geom_line(data = p, aes(x = Var1, y = Freq, col = 'PDF')) +
     geom_line(data = p, aes(x = Var1, y = CDF, col = 'CDF')) +
     scale_x_continuous('number of review') + 
-    scale_y_continuous('number of organization') + 
+    scale_y_continuous('number of reviewer') + 
     ggtitle("Reviewer") +
     theme(plot.title = element_text(hjust = 0.5))
 ggsave(file="plot/reviewer.png")
@@ -134,7 +135,7 @@ ggplot() +
     geom_line(data = p, aes(x = Var1, y = Freq, col = 'PDF')) +
     geom_line(data = p, aes(x = Var1, y = CDF, col = 'CDF')) +
     scale_x_log10('number of review') + 
-    scale_y_log10('number of organization') +
+    scale_y_log10('number of reviewer') +
     ggtitle("Reviewer (log)") +
     theme(plot.title = element_text(hjust = 0.5))
 ggsave(file="plot/reviewer_log.png")
@@ -170,8 +171,8 @@ p = do.call(rbind, p)
 ggplot() +
     geom_line(data = p, aes(x = Var1, y = Freq, group = type, col = type)) + 
     scale_x_continuous('fraction of review') + 
-    scale_y_continuous('frequency')+
-    ggtitle("Reviewer in given types") +
+    scale_y_continuous('number of reviewer')+
+    ggtitle("CDF of Reviewer in given types") +
     theme(plot.title = element_text(hjust = 0.5))
 ggsave(file="plot/reviewer_type.png")
 
@@ -179,25 +180,25 @@ ggsave(file="plot/reviewer_type.png")
 ggplot() +
     geom_line(data = p, aes(x = Var1, y = Freq, group = type, col = type)) + 
     scale_x_log10('fraction of review') + 
-    scale_y_log10('frequency')+
-    ggtitle("Reviewer in given types (log)") +
+    scale_y_log10('number of reviewer')+
+    ggtitle("CDF of Reviewer in given types (log)") +
     theme(plot.title = element_text(hjust = 0.5))
 ggsave(file="plot/reviewer_type_log.png")
 
-# Normalized CDF
-ggplot() +
-    geom_line(data = p, aes(x = Var1, y = Percent, group = type, col = type)) + 
-    scale_x_continuous('fraction of review') + 
-    scale_y_continuous('percentage') + 
-    ggtitle("Reviewer in given types (normalized)") +
-    theme(plot.title = element_text(hjust = 0.5))
-ggsave(file="plot/reviewer_type_percent.png")
-
-# Normalized CDF in log
-ggplot() +
-    geom_line(data = p, aes(x = Var1, y = Percent, group = type, col = type)) + 
-    scale_x_log10('fraction of review') + 
-    scale_y_continuous('percentage') +
-    ggtitle("Reviewer in given types (normalized, log)") +
-    theme(plot.title = element_text(hjust = 0.5))
-ggsave(file="plot/reviewer_type_percent_log.png")
+# # Normalized CDF
+# ggplot() +
+#     geom_line(data = p, aes(x = Var1, y = Percent, group = type, col = type)) + 
+#     scale_x_continuous('fraction of review') + 
+#     scale_y_continuous('percentage') + 
+#     ggtitle("Reviewer in given types (normalized)") +
+#     theme(plot.title = element_text(hjust = 0.5))
+# ggsave(file="plot/reviewer_type_percent.png")
+# 
+# # Normalized CDF in log
+# ggplot() +
+#     geom_line(data = p, aes(x = Var1, y = Percent, group = type, col = type)) + 
+#     scale_x_log10('fraction of review') + 
+#     scale_y_continuous('percentage') +
+#     ggtitle("Reviewer in given types (normalized, log)") +
+#     theme(plot.title = element_text(hjust = 0.5))
+# ggsave(file="plot/reviewer_type_percent_log.png")
