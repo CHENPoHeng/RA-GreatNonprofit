@@ -65,18 +65,20 @@ for file_dir in files:
                     tmp = review.find('p', {'class': 'author'})
                     reviewer_url = tmp.a['href']
                     reviewer_name = tmp.a.text.replace('\n','').strip()
+
                     if tmp.span.text[0].isdigit():
                         reviewer_type = tmp.contents[-3].replace('\n','').strip()
                     else: 
                         reviewer_type = tmp.span.text
-
+                        
                     reviewer_rating = review.find('span', {'itemprop': 'ratingValue'}).text
                     review_date = review.find('span', {'itemprop': 'datePublished'}).text
                     tmp = review.find('div', {'itemprop': 'reviewBody'})
-                    review_body = tmp.text.replace('\n','').replace('\t',' ')
-
+                    review_body = tmp.text.replace('\n','').replace('\r',' ').replace('\t',' ')
+                    review_body = re.sub( '\s+', ' ', review_body).strip()
                     # write them line by line
                     to_be_write = '\t'.join([org_name, review_id, review_likes, reviewer_url,
                         reviewer_name, reviewer_type, reviewer_rating, review_date, review_body]).encode('ascii', 'ignore')
                     writer.write(to_be_write + '\n')
+
                 print 'Org: %s, page %s out of %s is done!' % (org_name, i, num_pages) 
