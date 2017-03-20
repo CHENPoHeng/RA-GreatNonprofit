@@ -18,9 +18,9 @@ with open('data/orgData_LIWC.csv', 'w') as w:
     writer = csv.writer(w)
     header = ['org_id'] + liwc.getCategoryIndeces()
     writer.writerow(header)
-    for i, row in d[:3].iterrows():
+    for i, row in d.iterrows():
         features = liwc.extractFromDoc(row['description'])
-        to_write = [row[i]] + features
+        to_write = [i] + features
         writer.writerow(to_write)
         print 'Finished %s out of %s' % (i, d.shape[0])
 
