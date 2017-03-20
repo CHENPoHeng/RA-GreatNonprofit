@@ -1,5 +1,6 @@
 import os
 import csv
+import numpy as np
 import pandas as pd
 import func.liwcExtractor as lw
 
@@ -19,6 +20,8 @@ with open('data/orgData_LIWC.csv', 'w') as w:
     header = ['org_id'] + liwc.getCategoryIndeces()
     writer.writerow(header)
     for i, row in d.iterrows():
+        if type(row['description']) is not str: 
+            continue
         features = liwc.extractFromDoc(row['description'])
         to_write = [i] + features
         writer.writerow(to_write)
