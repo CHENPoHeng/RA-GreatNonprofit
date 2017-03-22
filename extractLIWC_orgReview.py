@@ -23,19 +23,27 @@ for file_dir in files:
     print '%s is done.' % state
 
 # create ID for each organization
+org_review['orgReview_id'] = org_review.index.values + 1
 d = org_review
 
 # create LIWC dictionary
 liwcPath = 'dict/LIWC2015_English_new.dic'
 liwc = lw.liwcExtractor(liwcPath = 'dict/LIWC2015_English_new.dic')
 
-with open('data/orgReview_LIWC.csv', 'w') as w:
+# manually do multi-processing
+r = 4
+times = 53000
+start = times * r
+end =  times * (r+1) + 5
+file_range = '%s_%s' % (start, end)
+
+with open('data/orgReview_LIWC_' + file_range + '.csv', 'w') as w:
     writer = csv.writer(w)
-    header = ['reviewer_url'] + liwc.getCategoryIndeces()
+    header = ['orgReview_id','reviewer_url'] + liwc.getCategoryIndeces()
     writer.writerow(header)
-    for i, row in d.iterrows():
+    for i, row in d[start:end].iterrows():
         features = liwc.extractFromDoc(row['review'])
-        to_write = [row['reviewer_url']] + features
+        to_write = [row['orgReview_id'], row['reviewer_url']] + features
         writer.writerow(to_write)
-        print 'Finished %s out of %s' % (i, d.shape[0])
+        print 'Finished %s out of %s' % (row['orgReview_id'], end)
     
