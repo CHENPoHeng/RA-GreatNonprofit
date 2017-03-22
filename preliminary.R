@@ -363,12 +363,15 @@ for(g in unique(d$group)) {
     ggsave(file=filename)
 }
 
-# basic Cumulative distribution logy
-ggplot(data = p, aes(x = fraction_review, y = cum_fraction_reviewer, group = type)) +
-    geom_line(aes(col = type, linetype = type)) + 
-    scale_linetype_manual(values = rep(c('solid', 'dashed'), 5)) + 
-    scale_color_manual(values = sort(rep(c(1:4,'grey50'), 2))) + 
-    scale_x_continuous('fraction of review') + 
-    scale_y_log10('fraction of reviewer') +  
-    ggtitle("Cummulative Reviewer Distribution given Types (logy)") 
-ggsave(file="plot/reviewer_type_logy.png")
+## To plot violin plot
+# Create a plots that: for each group (e.g. volunteer) of reviews, 
+# has a violin plot (geom_violin) for stars in the review. Here x
+# axis will be reviewer type, y axis is going to give the distribution
+# of reviews according to the stars given.
+d = data
+ggplot(d, aes(x = type, y = rating, col = type, fill = type)) + 
+    geom_violin(alpha = 0.5) + 
+    guides(fill = F, col = F) +
+    labs(x = 'Type', y = 'Rating') +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave(file = 'plot/reviewer_type_violin.png')
