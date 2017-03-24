@@ -1,5 +1,6 @@
 # import csv
 import os
+import json
 import pandas as pd
 
 ###### organization data
@@ -22,6 +23,7 @@ for file_dir in files:
     org_data = org_data.append(d, ignore_index=True)
     print '%s is done.' % state
 
+org_data['orgData_id'] = org_data.index.values + 1
 org_data.to_csv('orgData.csv', index = False)
 
 
@@ -43,4 +45,13 @@ for file_dir in files:
     org_review = org_review.append(d, ignore_index=True)
     print '%s is done.' % state
 
+org_review['orgReview_id'] = org_review.index.values + 1
 org_review.to_csv('orgReview.csv', index = False)
+
+## export as json file to avoid strange case
+res = {}
+for key, df_gb in org_review.groupby('orgReview_id'):
+    res[str(key)] = df_gb.to_dict('records')
+
+with open('orgReview.json', 'w') as writer:
+    json.dump(res, writer)
