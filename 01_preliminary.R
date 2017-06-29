@@ -1,4 +1,4 @@
-setwd('~/Documents/umsi/Ceren/greatNonprofits/')
+setwd('~/Documents/umsi/17Fall/Ceren/greatNonprofits/')
 len = length
 library(dplyr)
 library(data.table)
@@ -397,13 +397,26 @@ ggplot(d, aes(x = type, fill = rating, col = rating)) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ggsave(file = 'plot/reviewer_type_bar_log.png')
   
-  
-# p = d %>% group_by(type, rating) %>% summarize(count = n())
-# 
-# ggplot(p, aes(x = type, y = count, fill = rating, col = rating)) + 
-#     geom_bar(position = "fill", stat = "identity", alpha = 0.5) + 
-#     labs(x = 'Type', y = 'Count') +
-#     scale_y_continuous(labels = scales::percent_format()) +
-#     theme(axis.text.x = element_text(angle = 45, hjust = 1))
-# ggsave(file = 'plot/reviewer_type_bar_log.png')
 
+# You should make the y axis fractional (as opposed to counts) 
+# so we can compare between different types.
+
+ggplot(d, aes(x = type, fill = rating, col = rating)) + 
+    geom_bar(position="fill", alpha = 0.5) + 
+    labs(x = 'Type', y = 'Percent') +
+    scale_y_continuous(labels = scales::percent_format()) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave(file = 'plot/reviewer_type_percent_stack.png')
+
+tmp = d %>% group_by(type, rating) %>% 
+    summarize(count = n()) %>% 
+    group_by(type) %>%
+    mutate(p = count/sum(count))
+
+ggplot(tmp, aes(x = (type), y = p, fill = rating, col = rating)) +
+    geom_bar(stat="identity", position=position_dodge(), alpha = 0.5) +
+    scale_y_continuous(labels = scales::percent_format()) +
+    labs(x = 'Type', y = 'Percent') +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave(file = 'plot/reviewer_type_percent_dodge.png')
+  
