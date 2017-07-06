@@ -42,15 +42,20 @@ d = data
 d = merge(d, liwc, by = c('orgReview_id', 'reviewer_url'), all.x = T)
 # get only what we really need
 i = which(names(d) %in% c('date', 'id', 'org', 'review', 'reviewer', 'orgReview_id',
-                          'reviewer_url', 'likes', 'rating', 'state'))
+                          'reviewer_url', 'likes', 'state'))
 if(len(i)) d = d[, -i, with = F]
 
-# write.csv(d, 'data/orgReview_LIWC_new.csv')
+write.csv(d, 'data/orgReview_LIWC_new.csv', row.names=FALSE)
 
 
 ## start analysis
 # Let's start with simple summaries. For each group (e.g. volunteer reviews), 
 # compute the mean and standard deviation for each LIWC measure. 
+##
+i = which(names(d) %in% c('rating'))
+if(len(i)) d = d[, -i, with = F]
+##
+
 tmp = d[, lapply(.SD, mean), by = type]
 names(tmp) = c(names(tmp)[1], paste0(names(tmp)[-1],'.m'))
 d.typeSummary = tmp
