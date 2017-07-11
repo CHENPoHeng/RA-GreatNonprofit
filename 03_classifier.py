@@ -14,10 +14,10 @@ import numpy as np
 # cv
 from sklearn.cross_validation import train_test_split
 from sklearn.grid_search import GridSearchCV
-# model
-from lightning.classification import CDClassifier
-from sklearn.linear_model import Lasso
-
+# model 
+from lightning.classification import CDClassifier # for multi-class classification
+from sklearn.linear_model import Lasso # for binary classification
+from sklearn.linear_model import LogisticRegression
 
 
 
@@ -123,10 +123,64 @@ bst.score(X_test, y_test)
 # Percentage of selected features
 print(bst.n_nonzero(percentage=True))
 
+np.savetxt('output/type_4_groups_weights.txt', bst.coef_)
+
 ######################
 ### pairwise lasso ###
 ######################
+to_compare = [['Volunteer', 'Donor'], ['Donor', 'Client Served'], ['Donor', 'Board Member']]
 
+with open('output/type_pairwise.txt', 'w') as writer:
+    for i in to_compare:
+        print
+        print '=============='
+        print 'Now is working on: ' + ' vs '.join(i)
+        writer.write('[%s] \n' % ' vs '.join(i))
+        tmp = d[d.type.isin(i)]
+
+        y_type = tmp['type']
+        X = tmp.drop(['type', 'rating'], axis = 1)
+
+        # split data
+        X_train, X_test, y_train, y_test = train_test_split(X, y_type, test_size=0.1, random_state=42)
+
+        # build model 
+        # cross validation 
+        for C in [1, 0.1, 0.01, 0.001, 0.0001]:
+            # create and fit a ridge regression model, testing each alpha
+            clf = LogisticRegression(C=C, penalty='l1', tol=0.001) # Inverse of regularization strength; must be a positive float. Like in support vector machines, smaller values specify stronger regularization.
+            clf.fit(X_train, y_train)
+
+            # Percentage of selected features  
+            num = len(clf.coef_[0].nonzero()[0])
+            p = len(clf.coef_[0].nonzero()[0]) * 1.0/len(X_train.columns)
+            print '%s = 0, %s = 1' % tuple(clf.classes_)
+            print 'C: ', C
+            print 'Prediction accuracy: ', clf.score(X_test, y_test)
+            print 'Features left (# / %): ', num, '/', p
+
+            writer.write('%s = 0, %s = 1 \n' % tuple(clf.classes_))
+            writer.write('C: %s \n' % C)
+            writer.write('Accuracy: %s \n' % clf.score(X_test, y_test))
+            writer.write('Features left (#/%%): %s / %s \n' % (num , p))
+
+            # selected features
+            if p < 0.5:
+                idx = clf.coef_[0].nonzero()
+                ws = clf.coef_[0][idx].round(3).astype(str)
+                fs = X_train.columns[idx]
+                tmp = fs + ' (' + ws + ')'
+                print 'Selected features: %s' % ', '.join(tmp)
+                writer.write('Selected features: %s' % ', '.join(tmp))
+
+            print 
+            writer.write('\n')
+
+        writer.write('\n')
+
+#######################
+### one-against-all ###
+#######################
 
 
 
@@ -234,15 +288,15 @@ rvw = rvw.reset_index(drop=True)
 # calculate similarity 
 cos = []
 for i, row in rvw_org.iterrows():
-  tmp = org.loc[org['orgData_id'] == row['orgData_id']].index
-  cos.append(cosine_similarity(rvw_m[i, ], org_m[tmp, ])[0][0])
-  if i % 5000 == 0:
-    print '%s out of %s' % (i, len(rvw_org))
+    tmp = org.loc[org['orgData_id'] == row['orgData_id']].index
+    cos.append(cosine_similarity(rvw_m[i, ], org_m[tmp, ])[0][0])
+    if i % 5000 == 0:
+        print '%s out of %s' % (i, len(rvw_org))
 
 # save the similarity result
 with open('output/similarity.txt', 'w') as file:
     for i in cos:
-      file.write('%s\n' % i)
+        file.write('%s\n' % i)
 
 
 rating = rvw['rating'].values.astype(int)
