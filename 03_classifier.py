@@ -159,7 +159,8 @@ with open('output/type_pairwise.txt', 'w') as writer:
             print 'Prediction accuracy: ', clf.score(X_test, y_test)
             print 'Features left (# / %): ', num, '/', p
 
-            writer.write('%s = 0, %s = 1 \n' % tuple(clf.classes_))
+            if C == 1:
+                writer.write('%s = 0, %s = 1 \n' % tuple(clf.classes_))
             writer.write('C: %s \n' % C)
             writer.write('Accuracy: %s \n' % clf.score(X_test, y_test))
             writer.write('Features left (#/%%): %s / %s \n' % (num , p))
@@ -171,7 +172,7 @@ with open('output/type_pairwise.txt', 'w') as writer:
                 fs = X_train.columns[idx]
                 tmp = fs + ' (' + ws + ')'
                 print 'Selected features: %s' % ', '.join(tmp)
-                writer.write('Selected features: %s' % ', '.join(tmp))
+                writer.write('Selected features: %s \n' % ', '.join(tmp))
 
             print 
             writer.write('\n')
@@ -182,6 +183,53 @@ with open('output/type_pairwise.txt', 'w') as writer:
 ### one-against-all ###
 #######################
 
+to_compare = ['Volunteer', 'Donor', 'Client Served', 'Board Member']
+
+with open('output/type_one_against_all.txt', 'w') as writer:
+
+    for i in to_compare:
+        tmp = d.copy()
+        # change to binary classes
+        tmp.ix[tmp['type'] != i, 'type'] = 'Not ' + i
+        y_type = tmp['type']
+        X = tmp.drop(['type', 'rating'], axis = 1)
+
+        # split data
+        X_train, X_test, y_train, y_test = train_test_split(X, y_type, test_size=0.1, random_state=42)
+
+        # build model 
+        # cross validation 
+        for C in [1, 0.1, 0.01, 0.001, 0.0001]:
+            # create and fit a ridge regression model, testing each alpha
+            clf = LogisticRegression(C=C, penalty='l1', tol=0.001) # Inverse of regularization strength; must be a positive float. Like in support vector machines, smaller values specify stronger regularization.
+            clf.fit(X_train, y_train)
+
+            # Percentage of selected features  
+            num = len(clf.coef_[0].nonzero()[0])
+            p = len(clf.coef_[0].nonzero()[0]) * 1.0/len(X_train.columns)
+            print '%s = 0, %s = 1' % tuple(clf.classes_)
+            print 'C: ', C
+            print 'Prediction accuracy: ', clf.score(X_test, y_test)
+            print 'Features left (# / %): ', num, '/', p
+            if C == 1:
+                writer.write('%s = 0, %s = 1 \n' % tuple(clf.classes_))
+            writer.write('C: %s \n' % C)
+            writer.write('Accuracy: %s \n' % clf.score(X_test, y_test))
+            writer.write('Features left (#/%%): %s / %s \n' % (num , p))
+
+            # selected features
+            if p < 0.5:
+                idx = clf.coef_[0].nonzero()
+                ws = clf.coef_[0][idx].round(3).astype(str)
+                fs = X_train.columns[idx]
+                tmp = fs + ' (' + ws + ')'
+                print 'Selected features: %s' % ', '.join(tmp)
+                writer.write('Selected features: %s \n' % ', '.join(tmp))
+
+            print 
+            writer.write('\n')
+
+        writer.write('\n')
 
 
 ##########################
